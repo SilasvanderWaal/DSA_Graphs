@@ -83,20 +83,20 @@ pnode node_cons(pnode first, pnode second)
 //           in graph, nothing is done
 pnode add_node(pnode G, char nname)
 {
-    if(!G){
-        G = create_node(nname);
-        return G;
-    }
+    if(!G)
+        return create_node(nname);
 
     pnode current_node = G;
     pnode trailer_node = NULL;
 
+    //Looping over the list of nodes, searching for the right posistion
     while(current_node && get_name(current_node) <= nname){
         trailer_node = current_node;
         current_node = get_next(current_node);
     }
 
-    if(trailer_node->name != nname){
+    //Adding a new node to the list IF we do not have a node with the same already
+    if(get_name(trailer_node) != nname){
         pnode new_node = create_node(nname);
         node_cons(trailer_node, new_node);
         node_cons(new_node, current_node);
