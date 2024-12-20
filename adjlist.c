@@ -256,16 +256,24 @@ int node_cardinality(pnode G)
 	return count;
 }
 // name_to_pos: returns position of node with name c, -1 if not found
+// OBS! The first posistion starts at 1
 int name_to_pos(pnode G, char c)
 {
-	// TODO
+    int count = 1;
+    while (G) {
+        if(get_name(G) == c)
+            return count;
+    }
 	return -1;
 }
 // pos_to_name: returns name of node at position pos in G
 char pos_to_name(pnode G, int pos)
 {
-	// TODO
-	return '-';
+    pnode buff = G;
+	for (size_t i = 0; i < pos; i++) {
+	   buff = get_next(buff);
+	}
+	return get_name(buff);
 }
 // list_to_pos: creates adjacency matrix from adjacency list
 void list_to_matrix(pnode G, double matrix[MAXNODES][MAXNODES])
