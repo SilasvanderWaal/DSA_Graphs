@@ -83,7 +83,25 @@ pnode node_cons(pnode first, pnode second)
 //           in graph, nothing is done
 pnode add_node(pnode G, char nname)
 {
-	// TODO
+    if(!G){
+        G = create_node(nname);
+        return G;
+    }
+
+    pnode current_node = G;
+    pnode trailer_node = NULL;
+
+    while(current_node && get_name(current_node) <= nname){
+        trailer_node = current_node;
+        current_node = get_next(current_node);
+    }
+
+    if(trailer_node->name != nname){
+        pnode new_node = create_node(nname);
+        node_cons(trailer_node, new_node);
+        node_cons(new_node, current_node);
+    }
+
 	return G;
 }
 // rem_node: removes node with name name from adjacency list G
@@ -230,8 +248,12 @@ void remove_all_edges_from(pnode G, char name)
 // node_cardinality: returns the number of nodes in G
 int node_cardinality(pnode G)
 {
-	// TODO
-	return 0;
+	int count = 0;
+	while(G){
+        count++;
+        G = get_next(G);
+	}
+	return count;
 }
 // name_to_pos: returns position of node with name c, -1 if not found
 int name_to_pos(pnode G, char c)
