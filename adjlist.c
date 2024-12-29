@@ -109,16 +109,16 @@ pnode add_node(pnode G, char nname)
 //           if node does not exist, nothing happens
 pnode rem_node(pnode G, char name)
 {
-    pnode trailer = NULL;
-    pnode node_buff = G;
-
-    while(node_buff && get_name(node_buff) != name){
-        trailer = node_buff;
-        node_buff = get_next(node_buff);
+    pnode trailer_node = NULL;
+    pnode current_node = G;
+    //Looping until correct node or no node is left
+    while(current_node && get_name(current_node) != name){
+        trailer_node = current_node;
+        current_node = get_next(current_node);
     }
 
     //The node does not exist, return without adjusting the list
-    if(!node_buff){
+    if(!current_node){
         return G;
     }
 
@@ -126,11 +126,11 @@ pnode rem_node(pnode G, char name)
    	remove_all_edges_from(G, name);
 	remove_all_edges_to(G, name);
 	//If the construction returns zero, the node to be deleted is root, then we have to move the start pointer
-	if(!node_cons(trailer, get_next(node_buff))){
-        G = get_next(node_buff);
+	if(!node_cons(trailer_node, get_next(current_node))){
+        G = get_next(current_node);
 	}
-	free(node_buff);
-	node_buff = NULL;
+	free(current_node);
+	current_node = NULL;
 	return G;
 }
 // get_node: returns pointer to node with name name from adjacency list G. Returns NULL if not found in list
@@ -304,17 +304,15 @@ pedge _rem_edge(pedge E, char to)
 {
     pedge current_edge = E;
     pedge trailer_edge = NULL;
-
+    //Looping over until correct edge or no edge left
     while(get_to(current_edge) != to && current_edge){
         trailer_edge = current_edge;
         current_edge = get_next_edge(current_edge);
     }
-
     //Edge is not found
     if(!current_edge){
         return E;
     }
-
     //If edge_cons returns NULL, the edge is first in the list and E must be changed
     if(!edge_cons(trailer_edge, get_next_edge(current_edge))){
         E = get_next_edge(current_edge);
@@ -388,13 +386,13 @@ char pos_to_name(pnode G, int pos)
 void list_to_matrix(pnode G, double matrix[MAXNODES][MAXNODES])
 {
     if(is_empty(G)){return;}
-
+    //Initializing the matrix default values
     for(size_t i = 0; i < MAXNODES; i++){
         for(size_t j = 0; j < MAXNODES; j++){
             matrix[i][j] = INFINITY;
         }
     }
-
+    //Setting the existing edges to their weight
     for (pnode node = G; node != NULL; node = get_next(node)) {
         int from = name_to_pos(G, get_name(node));
         for (pedge edge = get_edges(node); edge != NULL; edge = get_next_edge(edge)) {
