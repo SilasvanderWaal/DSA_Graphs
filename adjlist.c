@@ -129,6 +129,7 @@ pnode rem_node(pnode G, char name)
 	if(!node_cons(trailer_node, get_next(current_node))){
         G = get_next(current_node);
 	}
+    //Releasing the nodes allocated memory
 	free(current_node);
 	current_node = NULL;
 	return G;

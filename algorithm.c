@@ -88,7 +88,24 @@ void prim(pnode G, char start_node, double *d, char *e)
 //--------------------------------------------------------------------------
 void floyd(pnode G, double W[MAXNODES][MAXNODES])
 {
-	// TODO
+	//Initializng the weights of the graf
+	list_to_matrix(G, W);
+	//Looping over the intermediates
+	for (size_t i = 0; i < MAXNODES; i++)
+	{
+		//Setting the distance of every node to itself to zero. We do this in the first loop because it has the least ammount of iterations.
+		W[i][i] = 0;
+		//Looping over the nodes as source nodes
+		for (size_t j = 0; j < MAXNODES; j++)
+		{
+			//Looping over the nodes as destination ndoes
+			for (size_t k = 0; k < MAXNODES; k++)
+			{
+				if (W[j][i] + W[i][k] < W[j][k])
+                    W[j][k] = W[j][i] + W[i][k];
+			}
+		}
+	}
 }
 //--------------------------------------------------------------------------
 // Warshall's algorithm: returns matrix of closures, i.e. if paths exists
@@ -100,5 +117,17 @@ void floyd(pnode G, double W[MAXNODES][MAXNODES])
 //--------------------------------------------------------------------------
 void warshall(pnode G, double W[MAXNODES][MAXNODES])
 {
-	// TODO
+	//We use the floyd function for the shortes path between all nodes
+	floyd(G, W);
+	//Check if the value is INF, if so, there is no path. 
+	for (size_t i = 0; i < MAXNODES; i++)
+	{
+		for (size_t j = 0; j < MAXNODES; j++)
+		{
+			if(W[i][j] == INFINITY)
+				W[i][j] = false;
+			else 
+				W[i][j] = true;
+		}
+	}
 }
