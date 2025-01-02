@@ -90,7 +90,7 @@ void floyd(pnode G, double W[MAXNODES][MAXNODES])
 {
 	//Initializng the weights of the graf
 	list_to_matrix(G, W);
-	//Looping over the intermediates
+	//Looping over the all the nodes as intermediate nodes
 	for (size_t i = 0; i < MAXNODES; i++)
 	{
 		//Setting the distance of every node to itself to zero. We do this in the first loop because it has the least ammount of iterations.
@@ -101,6 +101,7 @@ void floyd(pnode G, double W[MAXNODES][MAXNODES])
 			//Looping over the nodes as destination ndoes
 			for (size_t k = 0; k < MAXNODES; k++)
 			{
+				//If we find a shorter path when using the intermediate node, we use that path instead
 				if (W[j][i] + W[i][k] < W[j][k])
                     W[j][k] = W[j][i] + W[i][k];
 			}
