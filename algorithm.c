@@ -90,16 +90,18 @@ void floyd(pnode G, double W[MAXNODES][MAXNODES])
 {
 	//Initializng the weights of the graf
 	list_to_matrix(G, W);
+	//Getting the amount of nodes
+	int adjacency_list_lenght = node_cardinality(G);
 	//Looping over the all the nodes as intermediate nodes
-	for (size_t i = 0; i < MAXNODES; i++)
+	for (size_t i = 0; i < adjacency_list_lenght; i++)
 	{
-		//Setting the distance of every node to itself to zero. We do this in the first loop because it has the least ammount of iterations.
+		//Setting the distance of every node to itself to zero. We do this in the first loop because it has the least amount of iterations.
 		W[i][i] = 0;
 		//Looping over the nodes as source nodes
-		for (size_t j = 0; j < MAXNODES; j++)
+		for (size_t j = 0; j < adjacency_list_lenght; j++)
 		{
 			//Looping over the nodes as destination ndoes
-			for (size_t k = 0; k < MAXNODES; k++)
+			for (size_t k = 0; k < adjacency_list_lenght; k++)
 			{
 				//If we find a shorter path when using the intermediate node, we use that path instead
 				if (W[j][i] + W[i][k] < W[j][k])
@@ -120,10 +122,12 @@ void warshall(pnode G, double W[MAXNODES][MAXNODES])
 {
 	//We use the floyd function for the shortes path between all nodes
 	floyd(G, W);
+	//Retrieving the lenght of the list.
+	int adjacency_list_lenght = node_cardinality(G);
 	//Check if the value is INF, if so, there is no path. 
-	for (size_t i = 0; i < MAXNODES; i++)
+	for (size_t i = 0; i < adjacency_list_lenght; i++)
 	{
-		for (size_t j = 0; j < MAXNODES; j++)
+		for (size_t j = 0; j < adjacency_list_lenght; j++)
 		{
 			if(W[i][j] == INFINITY)
 				W[i][j] = false;
