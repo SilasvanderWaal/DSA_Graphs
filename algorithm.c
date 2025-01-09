@@ -1,4 +1,5 @@
 #include "algorithm.h"
+#include "adjlist.h"
 // queue - defines a queue as a pointer to an array of pointers to nodes
 typedef pnode *queue;
 // local prototypes
@@ -36,29 +37,32 @@ int Q_insert(queue Q, pnode u, int index) {
     Q[index++] = u;
     return index;
 }
-int   Q_is_empty(queue Q, int size) { return !Q; }
+int   Q_is_empty(queue Q, int size) { return size == 0; }
 pnode Q_extract_min(queue Q, int size) {
 
-    pnode min = Q[0];
-    unsigned empty_index;
+    pnode    min         = Q[0];
+    unsigned empty_index = 0;
 
     for (int i = 0; i < size; i++) {
         if (get_d(Q[i]) < get_d(min)) {
-            min = Q[i];
+            min         = Q[i];
             empty_index = i;
         }
     }
 
-    for (int j = empty_index; j < size; j++) {
-        Q[j - 1] = Q[j];
+    for (int j = empty_index; j < size - 1; j++) {
+        Q[j] = Q[j + 1];
     }
 
     return min;
 }
 bool Q_exists(queue Q, int qsize, char name) {
 
-    for ()
-
+    for (int i = 0; i < qsize; i++) {
+        if (get_name(Q[i]) == name) {
+            return true;
+        }
+    }
     return false;
 }
 //--------------------------------------------------------------------------
@@ -68,7 +72,41 @@ bool Q_exists(queue Q, int qsize, char name) {
 // c                       e: [  -,   a,   b]
 //--------------------------------------------------------------------------
 void dijkstra(pnode G, char s, double *d, char *e) {
-    // TODO
+    init_single_source(G, s);
+    int   Q_size = node_cardinality(G);
+    queue Q      = malloc(Q_size * sizeof(queue));
+    if (Q == NULL) {
+        return;
+    }
+    int j = 0;
+    for (pnode node = G; !is_empty(node); node = get_next(node)) {
+        j = Q_insert(Q, get_node(G, get_name(node)), j);
+    }
+
+    while (!Q_is_empty(Q, Q_size)) {
+
+        pnode min_node = Q_extract_min(Q, Q_size);
+        Q_size--;
+
+        for (pedge edge = get_edges(min_node); edge != NULL;
+             edge       = edge->next_edge) {
+            pnode connected_node = get_node(G, edge->to);
+
+            int old_d = get_d(get_node(G, edge->to));
+
+            relax(min_node, connected_node, edge->weight);
+
+            if (old_d != get_d(connected_node)) {
+
+                set_pi(connected_node, get_name(min_node));
+            }
+        }
+
+        // Add result to arrays
+        d[get_name(min_node) - 97] = get_d(min_node);
+        e[get_name(min_node) - 97] = get_pi(min_node);
+    }
+    free(Q);
 }
 //--------------------------------------------------------------------------
 // Prim's algorithm - Minimum Spanning Tree generator
@@ -78,7 +116,42 @@ void dijkstra(pnode G, char s, double *d, char *e) {
 // c                       e: [  -,   a,   b]
 //--------------------------------------------------------------------------
 void prim(pnode G, char start_node, double *d, char *e) {
-    // TODO
+    int   Q_size = node_cardinality(G);
+    queue Q      = malloc(Q_size * sizeof(queue));
+    if (Q == NULL) {
+        return;
+    }
+    int j = 0;
+    for (pnode node = G; !is_empty(node); node = get_next(node)) {
+        set_d(node, INFINITY);
+        set_pi(node, '-');
+        j = Q_insert(Q, get_node(G, get_name(node)), j);
+    }
+
+    set_d(get_node(G, start_node), 0);
+
+    while (!Q_is_empty(Q, Q_size)) {
+        pnode min_node = Q_extract_min(Q, Q_size);
+        Q_size--;
+
+        for (pedge edge = get_edges(min_node); edge != NULL;
+             edge       = edge->next_edge) {
+            pnode connected_node = get_node(G, edge->to);
+
+            if (Q_exists(Q, Q_size, get_name(connected_node)) &&
+                edge->weight < get_d(connected_node)) {
+                set_d(connected_node, edge->weight);
+                set_pi(connected_node, get_name(min_node));
+            }
+        }
+
+        // Add result to arrays
+        d[get_name(min_node) - 97] =
+            get_name(min_node) == start_node ? INFINITY : get_d(min_node);
+        e[get_name(min_node) - 97] = get_pi(min_node);
+    }
+
+    free(Q);
 }
 
 //--------------------------------------------------------------------------
