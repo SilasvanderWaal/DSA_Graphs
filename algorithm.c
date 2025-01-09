@@ -33,16 +33,32 @@ double min(double a, double b) { return a < b ? a : b; }
 // Q functions - used by other algorithms
 //--------------------------------------------------------------------------
 int Q_insert(queue Q, pnode u, int index) {
-    // TODO
-    return 0;
+    Q[index++] = u;
+    return index;
 }
 int   Q_is_empty(queue Q, int size) { return !Q; }
 pnode Q_extract_min(queue Q, int size) {
-    // TODO
-    return NULL;
+
+    pnode min = Q[0];
+    unsigned empty_index;
+
+    for (int i = 0; i < size; i++) {
+        if (get_d(Q[i]) < get_d(min)) {
+            min = Q[i];
+            empty_index = i;
+        }
+    }
+
+    for (int j = empty_index; j < size; j++) {
+        Q[j - 1] = Q[j];
+    }
+
+    return min;
 }
 bool Q_exists(queue Q, int qsize, char name) {
-    // TODO
+
+    for ()
+
     return false;
 }
 //--------------------------------------------------------------------------
